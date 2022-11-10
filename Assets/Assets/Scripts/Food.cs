@@ -4,20 +4,28 @@ using UnityEngine;
 
 public class Food : MonoBehaviour
 {
-    private int points = 10;
-    private GameObject gameManager;
-
-    private void Start()
+    [SerializeField] int points;
+    private GameManager gameManager;
+    public GameObject player;
+    
+    public virtual void Start()
     {
-        gameManager = GameObject.Find("Game Manger");
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        player = GameObject.Find("Player");
+
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            //gameManager.GetComponent<GameManager>().AddPoints(points);
+            gameManager.AddPoints(points);
+            Satisfy();
             Destroy(gameObject);
         }
         
+    }
+    public virtual void Satisfy() //ABSTRACTION
+    {
+        player.GetComponent<Player>().speed += 0;
     }
 }

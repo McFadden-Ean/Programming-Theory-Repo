@@ -8,39 +8,53 @@ public class Player : MonoBehaviour
     private float vMove;
     private float zBound = 5.0f;
     private float xBound = 10.0f;
-    [SerializeField] private float speed;
+    public float speed = 6;
+    private Animator playerAnim;
     [SerializeField] private float rotateSpeed;
-   
+    private AudioSource chomp;
+    void Start()
+    {
+        playerAnim = GetComponent<Animator>();
+        chomp = GetComponent<AudioSource>();
+    }
     // Update is called once per frame
     void Update()
     {
         Move();
         Pivot();
     }
-    private void Move()
+    private void Move() //ABSTRACTION
     {
         //moves the player
         if (Input.GetKey(KeyCode.UpArrow)) 
         {
             vMove = 1;
+            playerAnim.SetFloat("Speed_f", 1.0f);
         }
         else
         {
             vMove = 0;
+            playerAnim.SetFloat("Speed_f", 0.0f);
         }
         float shiftZ = vMove * speed * Time.deltaTime;
         transform.Translate(0, 0, shiftZ);
         Bounds();     
     }
-    private void Pivot()
+    private void Pivot() //ABSTRACTION
     {
         //rotates the player
         hMove = Input.GetAxis("Horizontal");
         float shiftY = hMove * rotateSpeed * Time.deltaTime;
         transform.Rotate(0, shiftY, 0);
     }
-
-    private void Bounds()
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Food"))
+        {
+            chomp.Play();
+        }
+    }
+    private void Bounds() //ABSTRACTION
     {
         //restricts player movement
         if (transform.position.z > zBound)
